@@ -9,6 +9,9 @@ export LESS_TERMCAP_so=$'\e[01;33m'
 export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;4;31m'
 
+export EDITOR="vim"
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse"
+
 # Test if current environnement is wsl2
 if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
     export DISPLAY=$(ip route list default | awk '{print $3}'):0
@@ -24,4 +27,16 @@ alias la='exa -a --group-directories-first'
 alias l='exa -lF --group-directories-first --header --long'
 
 alias up='sudo apt-get update -y && sudo apt-get upgrade -y'
-alias reload='echo "Sourcing environnement"; source ~/.bashrc'
+alias reload='echo "Sourcing environnement"; source ~/.zshrc'
+
+alias k='ps -ef | fzf | awk '{print $2}' | xargs kill -9'
+alias findall='find * | fzf --prompt 'All> ' \
+             --header 'CTRL-D: Directories / CTRL-F: Files' \
+             --bind 'ctrl-d:change-prompt(Directories> )+reload(find * -type d)' \
+             --bind 'ctrl-f:change-prompt(Files> )+reload(find * -type f)''
+
+gdiff() {
+  preview="git diff $@ --color=always -- {-1}"
+  git diff $@ --name-only | fzf -m --ansi --preview $preview
+}
+

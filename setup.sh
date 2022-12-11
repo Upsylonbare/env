@@ -80,6 +80,7 @@ echo_info "Installing fzf"
 if wget "https://github.com/junegunn/fzf/releases/download/0.35.1/fzf-0.35.1-linux_amd64.tar.gz"; then
     tar -xf fzf-0.35.1-linux_amd64.tar.gz
     if sudo cp fzf /usr/bin/fzf; then
+        cp "${CURDIR}/fzf-git.sh" ~/.fzf-git.sh
         echo_ok "Fzf installed."
     else
         echo_err "Fzf not installed!"
@@ -100,6 +101,13 @@ if sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/insta
     fi
 else
     echo_err "OhMyZsh not installed!"
+fi
+
+#Configuring vim
+echo_info "Setting up vim"
+if [ ! -d ~/.vim ]; then
+    mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/colors ~/.vim/plugged
+    cp "${CURDIR}/vimrc" ~/.vimrc
 fi
 
 #ask for git config

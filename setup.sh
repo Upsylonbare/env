@@ -58,7 +58,7 @@ if curl https://typora.io/linux/public-key.asc | gpg --dearmor > /usr/share/keyr
 fi
 
 echo_info "Copying default environment"
-cp "${CURDIR}/goffarEnv" ~/.myenv
+cp "${CURDIR}/myenv" ~/.myenv
 
 if ! which exa; then
     echo_info "Trying to install exa manually since it was not installed automatically"

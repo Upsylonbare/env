@@ -73,11 +73,11 @@ set fileencoding=utf-8
 set listchars=nbsp:¤,tab:>-,trail:¤,extends:>,precedes:<
 set list
 
- " Highlight 80 column if I got far on the line
- "highlight OverLength ctermbg=red ctermfg=white guibg=#592929
- "match OverLength /\%81v.\+/
-highlight ColorColumn ctermbg=32
-set colorcolumn=72
+" Highlight 80 column if I got far on the line
+" highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+" match OverLength /\%81v.\+/
+" highlight ColorColumn ctermbg=32
+" set colorcolumn=72
 
 " Set relative number (to the cursor)
 "set relativenumber
@@ -88,6 +88,10 @@ set hlsearch
 " map <C-n> :NERDTreeToggle<CR>
 
 " autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+" Run PlugInstall if there are missing plugins
+autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+  \| PlugInstall --sync | source $MYVIMRC
+\| endif
 
 " PLUGINS ---------------------------------------------------------------- {{{
 

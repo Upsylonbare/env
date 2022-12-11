@@ -10,7 +10,7 @@ export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;4;31m'
 
 export EDITOR=vim
-export FZF_DEFAULT_OPTS="--height 60%"
+export FZF_DEFAULT_OPTS
 
 # Test if current environnement is wsl2
 if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
@@ -32,6 +32,9 @@ alias reload='echo "Sourcing environnement"; source ~/.zshrc'
 alias k='ps -ef | fzf | awk '{print $2}' | xargs kill -9'
 alias findall="find * | fzf --prompt 'All> ' --header 'CTRL-D: Directories / CTRL-F: Files' --bind 'ctrl-d:change-prompt(Directories>)+reload(find * -type d)' --bind 'ctrl-f:change-prompt(Files>)+reload(find * -type f)'"
 
+_gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
+_viewGitLogLine="echo {} | $_gitLogLineToHash | xargs -I % sh -c 'git show --color=always % | diff-so-fancy'"
+
 gdiff() {
     preview="git diff $@ --color=always -- {-1}"
     git diff $@ --name-only | fzf -m --ansi --preview $preview
@@ -46,7 +49,6 @@ fz() {
 
 lg(){
     git log \
-        --reverse \
         --color=always \
         --format="%C(cyan)%hv %C(blue)%ar %C(auto)%d %C(yellow)%s%+b %C(black)%ae" "$@" |
         fzf -i -e +s \
@@ -61,6 +63,6 @@ lg(){
                        diff-so-fancy'" \
             --header "enter: view, C-c: copy hash" \
             --bind "enter:execute:$_viewGitLogLine | less -R" \
-            --bind "ctrl-c:execute: $_gitLogLineToHash | 
+            --bind "ctrl-c:execute:$_gitLogLineToHash | 
                     xclip -r -selection clipboard"
 }

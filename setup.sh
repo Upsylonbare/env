@@ -34,7 +34,7 @@ pkg_list="git\
           fdclone"
 
 echo_info "Updating APT repositories"
-sudo apt update
+sudo apt update -yqq
 
 for pkg in $pkg_list:
 do
@@ -47,7 +47,7 @@ do
 done
 
 echo_info "Installing typora"
-if ! which typora; then
+if ! which typora > /dev/null; then
     if curl https://typora.io/linux/public-key.asc | sudo gpg --dearmor > /usr/share/keyrings/typora.gpg; then
         touch /etc/apt/sources.list.d/typora.list
         echo "deb [signed-by=/usr/share/keyrings/typora.gpg] https://typora.io/linux ./" > /etc/apt/sources.list.d/typora.list
@@ -65,7 +65,7 @@ fi
 echo_info "Copying default environment"
 cp "${CURDIR}/myenv" ~/.myenv
 
-if ! which exa; then
+if ! which exa > /dev/null; then
     echo_info "Trying to install exa manually since it was not installed automatically"
     if wget "https://github.com/ogham/exa/releases/download/v0.10.1/exa-linux-x86_64-v0.10.1.zip"; then
         unzip exa-linux-x86_64-v0.10.1.zip
@@ -83,8 +83,8 @@ fi
 
 #installing fzf only if it is not already installed
 echo_info "Installing fzf"
-if ! which fzf; then
-    if wget "https://github.com/junegunn/fzf/releases/download/0.35.1/fzf-0.35.1-linux_amd64.tar.gz"; then
+if ! which fzf > /dev/null; then
+    if wget "https://github.com/junegunn/fzf/releases/download/0.35.1/fzf-0.35.1-linux_amd64.tar.gz" > /dev/null; then
         tar -xf fzf-0.35.1-linux_amd64.tar.gz
         if sudo cp fzf /usr/bin/fzf; then
             cp "${CURDIR}/fzf-git.sh" ~/.fzf-git.sh
@@ -122,7 +122,7 @@ fi
 echo_info "Setting up vim"
 if [ ! -d ~/.vim ]; then
     mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/colors ~/.vim/plugged
-    curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    curl -sfLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     cp "${CURDIR}/vimrc" ~/.vimrc
 else
     echo_info "Vim is already configured, do you want to reconfigure it? (y/n)"
@@ -131,19 +131,19 @@ else
         echo_info "Reconfiguring vim"
         rm -rf ~/.vim ~/.vimrc
         mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/colors ~/.vim/plugged
-        curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        curl -sfLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
         cp "${CURDIR}/vimrc" ~/.vimrc
-        vim -es -u vimrc -i NONE -c "PlugInstall" -c "qa"
+        vim +PlugInstall +qall > /dev/null 2>&1
     else
         echo_info "Keeping vim configuration"
     fi
 fi
 
 echo_info "Setting up diff-so-fancy"
-if which diff-so-fancy; then
+if which diff-so-fancy > /dev/null; then
     echo_info "Diff-so-fancy already installed, skipping"
 else
-    if wget "https://raw.githubusercontent.com/so-fancy/diff-so-fancy/master/third_party/build_fatpack/diff-so-fancy"; then
+    if wget "https://raw.githubusercontent.com/so-fancy/diff-so-fancy/master/third_party/build_fatpack/diff-so-fancy" ; then
         if sudo mv diff-so-fancy /usr/local/bin/diff-so-fancy; then
             chmod +x /usr/local/bin/diff-so-fancy
             echo_ok "Diff-so-fancy installed."

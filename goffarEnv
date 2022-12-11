@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Colored manpages
+export LESS_TERMCAP_mb=$'\e[1;32m'
+export LESS_TERMCAP_md=$'\e[1;32m'
+export LESS_TERMCAP_me=$'\e[0m'
+export LESS_TERMCAP_se=$'\e[0m'
+export LESS_TERMCAP_so=$'\e[01;33m'
+export LESS_TERMCAP_ue=$'\e[0m'
+export LESS_TERMCAP_us=$'\e[1;4;31m'
+
+# Test if current environnement is wsl2
+if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
+    export DISPLAY=$(ip route list default | awk '{print $3}'):0
+    export LIBGL_ALWAYS_INDIRECT=1
+    alias i3='sudo mount --bind /mnt/c/Users/clego/OneDrive\ -\ ESEO/Cours/I3 ~/I3/'
+    alias i2='sudo mount --bind /mnt/c/Users/clego/OneDrive\ -\ ESEO/Cours/I2 ~/I2/'
+    alias i='i2 && i3'
+fi
+
+#My aliases
+alias ll='exa -laF --group-directories-first --header --long'
+alias la='exa -a --group-directories-first'
+alias l='exa -lF --group-directories-first --header --long'
+
+alias up='sudo apt-get update -y && sudo apt-get upgrade -y'
+alias reload='echo "Sourcing environnement"; source ~/.bashrc'

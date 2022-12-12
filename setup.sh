@@ -31,7 +31,9 @@ pkg_list="git\
           net-tools\
           iproute2\
           zsh\
-          fdclone"
+          fdclone\
+          bat\
+          xclip"
 
 echo_info "Updating APT repositories"
 sudo apt update -yqq
@@ -122,7 +124,7 @@ fi
 echo_info "Setting up vim"
 if [ ! -d ~/.vim ]; then
     mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/colors ~/.vim/plugged
-    curl -sfLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    curl -sfLo  ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     cp "${CURDIR}/vimrc" ~/.vimrc
 else
     echo_info "Vim is already configured, do you want to reconfigure it? (y/n)"

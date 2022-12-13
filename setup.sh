@@ -1,4 +1,6 @@
 #!/bin/sh
+# Inspired from tot0k's setup.sh
+# https://gitlab.com/tot0k/myenv
 
 . ./utils.sh
 CURDIR="$(pwd)"
@@ -27,7 +29,6 @@ pkg_list="git\
           terminator\
           nano\
           tldr\
-          exa\
           net-tools\
           iproute2\
           zsh\

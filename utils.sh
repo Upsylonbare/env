@@ -1,4 +1,5 @@
 #!/bin/sh
+# AUTHOR:   tot0k https://github.com/tot0k
 
 RESET='\033[0m'
 

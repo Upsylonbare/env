@@ -36,7 +36,7 @@ alias findall="find * | fzf --prompt 'All> ' --header 'CTRL-D: Directories / CTR
 _gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
 
 _view_commit="$_gitLogLineToHash | xargs -I % sh -c 'git show --color=always % | diff-so-fancy'"
-_copy_commit_hash="$_gitLogLineToHash | xclip -r selection clipboard"
+_copy_commit_hash="$_gitLogLineToHash | xclip -r -selection clipboard"
 _git_checkout="$_gitLogLineToHash | xargs -I % sh -c 'git checkout %'"
 
 gdiff() {
@@ -77,7 +77,6 @@ lg(){
             --preview=$_view_commit \
             --header "enter: view, CTRL+c: copy commit hash, CTRL+x: checkout" \
             --bind "enter:execute: echo {} | $_view_commit" \
-            --bind "ctrl-c:execute:$_copy_commit_hash | 
-                    xclip -r -selection clipboard"\
+            --bind "ctrl-c:execute:$_copy_commit_hash" \
             --bind "ctrl-x:execute:$_git_checkout"
 }

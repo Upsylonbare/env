@@ -44,8 +44,18 @@ gdiff() {
     git diff $@ --name-only | fzf -m --ansi --preview $preview
 }
 
+
+
 gdif() {
-    git diff 
+    git diff \
+        $@ \
+        --name-only |
+            fzf -m \
+                --reverse \
+                --tiebreak=index \
+                --no-multi \
+                --ansi \
+                --preview="git diff {} | diff-so-fancy"
 }
 
 fz() {
@@ -66,7 +76,7 @@ lg(){
             --ansi \
             --preview=$_view_commit \
             --header "enter: view, CTRL+c: copy commit hash, CTRL+x: checkout" \
-            --bind "enter:execute:$_view_commit" \
+            --bind "enter:execute: echo {} | $_view_commit" \
             --bind "ctrl-c:execute:$_copy_commit_hash | 
                     xclip -r -selection clipboard"\
             --bind "ctrl-x:execute:$_git_checkout"

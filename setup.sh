@@ -89,7 +89,8 @@ if ! which fzf > /dev/null; then
     if wget "https://github.com/junegunn/fzf/releases/download/0.35.1/fzf-0.35.1-linux_amd64.tar.gz" > /dev/null; then
         tar -xf fzf-0.35.1-linux_amd64.tar.gz
         if sudo cp fzf /usr/bin/fzf; then
-            cp "${CURDIR}/fzf-git.sh" ~/.fzf-git.sh
+            # cp "${CURDIR}/fzf-git.sh" ~/.fzf-git.sh
+            # chmod +x ~/.fzf-git.sh
             echo_ok "Fzf installed."
         else
             echo_err "Fzf not installed!"

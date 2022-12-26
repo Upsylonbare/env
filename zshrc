@@ -30,5 +30,4 @@ source $ZSH/oh-my-zsh.sh
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
-source ~/.myenv
-source ~/.fzf-git.sh
+source ~/.myenvh

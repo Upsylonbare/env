@@ -40,7 +40,7 @@ alias up='sudo apt-get update -y && sudo apt-get upgrade -y'
 alias reload='echo "Sourcing environnement"; source ~/.zshrc'
 alias cat='batcat -p'
 
-alias k='ps -ef | fzf | awk '{print $2}' | xargs kill -9'
+alias k="ps -ef | fzf | awk '{print $2}' | xargs kill -9"
 
 alias findall="find * | \
                 fzf --prompt 'All> ' \

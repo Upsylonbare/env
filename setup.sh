@@ -110,6 +110,12 @@ else
         echo_ok "OhMyZsh installed."
         echo_info "Copying zsh config"
         cp "${CURDIR}/zshrc" ~/.zshrc
+        if  cp "${CURDIR}/my-af-magic.zsh-theme" ~/.oh-my-zsh/themes/my-magic-totok.zsh-theme; then
+            echo_info "Using custom zsh theme"
+        else
+            echo_err "Could not cp custom zsh theme, falling back to default theme"
+            sed -i 's/my-af-magic.zsh-theme/af-magic.zsh-theme/g' ~/.zshrc
+        fi
         echo_info "Setting zsh as default shell"
         if chsh -s "$(which zsh)"; then
             echo_ok "Zsh set as default shell."

@@ -28,10 +28,16 @@ alias l='exa -lF --group-directories-first --header --long'
 
 alias up='sudo apt-get update -y && sudo apt-get upgrade -y'
 alias reload='echo "Sourcing environnement"; source ~/.zshrc'
-alias cat='batcat'
+alias cat='batcat -p'
 
 alias k='ps -ef | fzf | awk '{print $2}' | xargs kill -9'
-alias findall="find * | fzf --prompt 'All> ' --header 'CTRL-D: Directories / CTRL-F: Files' --bind 'ctrl-d:change-prompt(Directories>)+reload(find * -type d)' --bind 'ctrl-f:change-prompt(Files>)+reload(find * -type f)'"
+
+alias findall="find * | \
+                fzf --prompt 'All> ' \
+                    --header 'CTRL-D: Directories / CTRL-F: Files' \
+                    --bind 'ctrl-d:change-prompt(Directories>)+reload(find * -type d)' \
+                    --bind 'ctrl-f:change-prompt(Files>)+reload(find * -type f)' |
+                    xargs realpath | xclip -r -selection clipboard"
 
 _gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
 
@@ -60,6 +66,9 @@ fz() {
 
 lg(){
     git log \
+        --graph \
+        --all \
+        --oneline \
         --color=always \
         --format="%C(cyan)%hv %C(blue)%ar %C(auto)%d %C(yellow)%s%+b %C(black)%ae" "$@" |
         fzf -i -e +s \
@@ -72,4 +81,22 @@ lg(){
             --bind "enter:execute:$_view_commit" \
             --bind "ctrl-c:execute:$_copy_commit_hash" \
             --bind "ctrl-x:execute:$_git_checkout"
+}
+
+add_alias() {
+  # Vérifie que le fichier myenv existe
+  if [ ! -f ~/.myenv ]; then
+    echo "~/.myenv file not found"
+    exit 1
+  fi
+
+  # Vérifie que l'alias n'existe pas déjà dans le fichier myenv
+  if grep -q "$1" ~/.myenv; then
+    echo "L'alias existe déjà dans le fichier myenv."
+  else
+    # Ajoute l'alias au fichier myenv
+    echo "\nalias $1='$2'" >> ~/.myenv
+    echo "L'alias a été ajouté au fichier myenv."
+    reload
+  fi
 }

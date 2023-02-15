@@ -12,6 +12,16 @@ export LESS_TERMCAP_us=$'\e[1;4;31m'
 export EDITOR=vim
 export FZF_DEFAULT_OPTS
 
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
 # Test if current environnement is wsl2
 if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
     export DISPLAY=$(ip route list default | awk '{print $3}'):0
@@ -76,7 +86,7 @@ lg(){
             --tiebreak=index \
             --no-multi \
             --ansi \
-            --preview=$_view_commit \
+            --preview="$_view_commit" \
             --header "enter: view, CTRL+c: copy commit hash, CTRL+x: checkout" \
             --bind "enter:execute:$_view_commit" \
             --bind "ctrl-c:execute:$_copy_commit_hash" \

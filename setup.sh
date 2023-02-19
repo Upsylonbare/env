@@ -110,7 +110,7 @@ else
         echo_ok "OhMyZsh installed."
         echo_info "Copying zsh config"
         cp "${CURDIR}/zshrc" ~/.zshrc
-        if  cp "${CURDIR}/my-af-magic.zsh-theme" ~/.oh-my-zsh/themes/my-magic-totok.zsh-theme; then
+        if  cp "${CURDIR}/my-af-magic.zsh-theme" ~/.oh-my-zsh/themes/my-af-magic.zsh-theme; then
             echo_info "Using custom zsh theme"
         else
             echo_err "Could not cp custom zsh theme, falling back to default theme"

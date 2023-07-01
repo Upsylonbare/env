@@ -22,10 +22,29 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
+# set PATH for cargo if it exists
+if [ -d "$HOME/.carbo/bin" ] ; then
+    PATH="$HOME/.cargo/bin:$PATH"
+fi
+
+# set PATH for texlive if it exists
+if [ -d "/usr/local/texlive/2023/bin/x86_64-linux" ] ; then
+    PATH="/usr/local/texlive/2023/bin/x86_64-linux:$PATH"
+fi
+
+# set PATH for texlive man if it exists
+if [ -d "/usr/local/texlive/2023/texmf-dist/doc/man" ] ; then
+    MANPATH="/usr/local/texlive/2023/texmf-dist/doc/man:$MANPATH"
+fi
+
+# set PATH for texlive info if it exists
+if [ -d "/usr/local/texlive/2023/texmf-dist/doc/info" ] ; then
+    INFOPATH="/usr/local/texlive/2023/texmf-dist/doc/info:$INFOPATH"
+fi
+
 # Test if current environnement is wsl2
 if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
-    export DISPLAY=$(ip route list default | awk '{print $3}'):0
-    export LIBGL_ALWAYS_INDIRECT=1
+    export DISPLAY=:0
     alias i3='sudo mount --bind /mnt/c/Users/clego/OneDrive\ -\ ESEO/Cours/I3 ~/I3/'
     alias i2='sudo mount --bind /mnt/c/Users/clego/OneDrive\ -\ ESEO/Cours/I2 ~/I2/'
     alias i='i2 && i3'
@@ -40,7 +59,7 @@ alias up='sudo apt-get update -y && sudo apt-get upgrade -y'
 alias reload='echo "Sourcing environnement"; source ~/.zshrc'
 alias cat='batcat -p'
 
-alias k="ps -ef | fzf | awk '{print $2}' | xargs kill -9"
+alias k="ps -ef | fzf --reverse | awk '{print $2}' | xargs kill -9"
 
 alias findall="find * | \
                 fzf --prompt 'All> ' \
@@ -49,6 +68,9 @@ alias findall="find * | \
                     --bind 'ctrl-f:change-prompt(Files>)+reload(find * -type f)' |
                     xargs realpath | xclip -r -selection clipboard"
 
+alias path="echo \$PATH | tr ':' '\n'"
+
+
 _gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
 
 _view_commit="echo {} | $_gitLogLineToHash | xargs -I % sh -c 'git show --color=always % | diff-so-fancy' | less -R"
@@ -56,9 +78,10 @@ _copy_commit_hash="$_gitLogLineToHash | xclip -r -selection clipboard"
 _git_checkout="$_gitLogLineToHash | xargs -I % sh -c 'git checkout %'"
 
 gdiff() {
+    local path_to_repo=$(git rev-parse --show-toplevel)
     git diff \
         $@ \
-        --name-only |
+        --name-only | sed "s,^,$path_to_repo/," |
             fzf -m \
                 --reverse \
                 --tiebreak=index \
@@ -76,6 +99,7 @@ fz() {
 
 lg(){
     git log \
+        $@ \
         --graph \
         --all \
         --oneline \
@@ -93,20 +117,11 @@ lg(){
             --bind "ctrl-x:execute:$_git_checkout"
 }
 
-add_alias() {
-  # Vérifie que le fichier myenv existe
-  if [ ! -f ~/.myenv ]; then
-    echo "~/.myenv file not found"
-    exit 1
-  fi
-
-  # Vérifie que l'alias n'existe pas déjà dans le fichier myenv
-  if grep -q "$1" ~/.myenv; then
-    echo "L'alias existe déjà dans le fichier myenv."
-  else
-    # Ajoute l'alias au fichier myenv
-    echo "\nalias $1='$2'" >> ~/.myenv
-    echo "L'alias a été ajouté au fichier myenv."
-    reload
-  fi
+# Function to speed up git log command (write commit graph in .git/objects/info/commit-graph)
+speed_lg()
+{
+    git config --global core.commitGraph true
+    git config --global gc.writeCommitGraph true
+    git commit-graph write
 }
+

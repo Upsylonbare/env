@@ -51,10 +51,9 @@ done
 
 echo_info "Installing typora"
 if ! which typora > /dev/null; then
-    if curl https://typora.io/linux/public-key.asc | sudo gpg --dearmor > /usr/share/keyrings/typora.gpg; then
-        touch /etc/apt/sources.list.d/typora.list
-        echo "deb [signed-by=/usr/share/keyrings/typora.gpg] https://typora.io/linux ./" > /etc/apt/sources.list.d/typora.list
-        sudo apt update
+    if wget -qO - https://typoraio.cn/linux/public-key.asc | sudo tee /etc/apt/trusted.gpg.d/typora.asc; then
+        sudo add-apt-repository -y 'deb https://typora.io/linux ./'
+        sudo apt-get update -yqq
         if sudo apt-get -yqq install typora; then
             echo_ok "Typora installed."
         else
@@ -90,8 +89,6 @@ if ! which fzf > /dev/null; then
     if wget "https://github.com/junegunn/fzf/releases/download/0.35.1/fzf-0.35.1-linux_amd64.tar.gz" > /dev/null; then
         tar -xf fzf-0.35.1-linux_amd64.tar.gz
         if sudo cp fzf /usr/bin/fzf; then
-            # cp "${CURDIR}/fzf-git.sh" ~/.fzf-git.sh
-            # chmod +x ~/.fzf-git.sh
             echo_ok "Fzf installed."
         else
             echo_err "Fzf not installed!"

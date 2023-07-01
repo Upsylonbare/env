@@ -104,7 +104,7 @@ lg(){
         --all \
         --oneline \
         --color=always \
-        --format="%C(cyan)%hv %C(blue)%ar %C(auto)%d %C(yellow)%s%+b %C(black)%ae" "$@" |
+        --format="%C(cyan)%hv %C(blue)%ar %C(auto)%d %C(yellow)%s%+b %C(white)%ae" "$@" |
         fzf -i -e +s \
             --reverse \
             --tiebreak=index \

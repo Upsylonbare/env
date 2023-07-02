@@ -50,6 +50,16 @@ if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
     alias i='i2 && i3'
 fi
 
+if [ -n "$DISPLAY" ]; then
+  if xdpyinfo &> /dev/null; then
+    echo "DISPLAY is set and valid."
+  else
+    echo "DISPLAY is set but invalid."
+  fi
+else
+  echo "DISPLAY is not set."
+fi
+
 #My aliases
 alias ll='exa -laF --group-directories-first --header --long'
 alias la='exa -a --group-directories-first'
@@ -58,8 +68,6 @@ alias l='exa -lF --group-directories-first --header --long'
 alias up='sudo apt-get update -y && sudo apt-get upgrade -y'
 alias reload='echo "Sourcing environnement"; source ~/.zshrc'
 alias cat='batcat -p'
-
-alias k="ps -ef | fzf --reverse | awk '{print $2}' | xargs kill -9"
 
 alias findall="find * | \
                 fzf --prompt 'All> ' \
@@ -74,8 +82,15 @@ alias path="echo \$PATH | tr ':' '\n'"
 _gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
 
 _view_commit="echo {} | $_gitLogLineToHash | xargs -I % sh -c 'git show --color=always % | diff-so-fancy' | less -R"
+_view_file="echo {} | xargs -I % sh -c 'batcat --style=numbers --color=always % | less -R'"
+_view_diff="echo {} | xargs -I % sh -c 'git diff % | diff-so-fancy' | less -R"
 _copy_commit_hash="$_gitLogLineToHash | xclip -r -selection clipboard"
 _git_checkout="$_gitLogLineToHash | xargs -I % sh -c 'git checkout %'"
+
+k()
+{
+    ps -ef | fzf --reverse | awk '{print $2}' | xargs kill -9
+}
 
 gdiff() {
     local path_to_repo=$(git rev-parse --show-toplevel)
@@ -87,7 +102,10 @@ gdiff() {
                 --tiebreak=index \
                 --no-multi \
                 --ansi \
-                --preview="git diff {} | diff-so-fancy"
+                --preview="git diff {} | diff-so-fancy" \
+                --header "Enter: view file, CTRL-d: view diff" \
+                --bind "enter:execute:$_view_file" \
+                --bind "ctrl-d:execute:$_view_diff"
 }
 
 fz() {
@@ -97,9 +115,20 @@ fz() {
     fi
 }
 
-lg(){
-    git log \
-        $@ \
+lg() {
+    if [ $# -eq 0 ]; then
+        my_git_log -10000
+    else
+        my_git_log "$@"
+    fi
+}
+
+my_git_log() {
+    local display_check="xdpyinfo &> /dev/null"
+    
+    # Check if DISPLAY is set and valid
+    if [ -n "$DISPLAY" ] && eval "$display_check"; then
+        git log \
         --graph \
         --all \
         --oneline \
@@ -115,6 +144,25 @@ lg(){
             --bind "enter:execute:$_view_commit" \
             --bind "ctrl-c:execute:$_copy_commit_hash" \
             --bind "ctrl-x:execute:$_git_checkout"
+    else
+        git log \
+        --graph \
+        --all \
+        --oneline \
+        --color=always \
+        --format="%C(cyan)%hv %C(blue)%ar %C(auto)%d %C(yellow)%s%+b %C(white)%ae" "$@" |
+        fzf -i -e +s \
+            --reverse \
+            --tiebreak=index \
+            --no-multi \
+            --ansi \
+            --preview="$_view_commit" \
+            --header "enter: view, CTRL+x: checkout" \
+            --bind "enter:execute:$_view_commit" \
+            --bind "ctrl-x:execute:$_git_checkout"
+    fi
+
+    
 }
 
 # Function to speed up git log command (write commit graph in .git/objects/info/commit-graph)

@@ -108,10 +108,20 @@ gdiff() {
                 --bind "ctrl-d:execute:$_view_diff"
 }
 
-fz() {
+fe() {
+    local file
     file=$(fzf --preview 'batcat --style=numbers --color=always {}')
     if [ -n "$file" ]; then
         editor "$file"
+    fi
+}
+
+fcd() {
+    local dir
+    dir=$(find -L . -type d 2> /dev/null | fzf +m)
+
+    if [ -n "$dir" ]; then
+        cd "$dir"
     fi
 }
 

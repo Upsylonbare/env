@@ -5,17 +5,14 @@
 . ./utils.sh
 CURDIR="$(pwd)"
 TMP="$(mktemp -d)"
-
-fallback_ls() {
-    sed -i 's/exa -laF --group-directories-first --header --git --long/ls  -laF --group-directories-first/g' ~/.myenv
-    sed -i 's/exa -a --group-directories-first/ls -a --group-directories-first/g' ~/.myenv
-    sed -i 's/exa -lF --group-directories-first --header --git --long/ls -lF --group-directories-first/g' ~/.myenv
-    sed -i 's/exa --group-directories-first/ls --group-directories-first/g' ~/.myenv
-}
-
 cd "$TMP" || exit
 echo_info "Setting up Legoffar's environment"
 
+################################################################################
+#                                                                              #
+#                                 Pkg                                          #
+#                                                                              #
+################################################################################
 pkg_list="git\
           curl\
           wget\
@@ -49,6 +46,11 @@ do
     fi
 done
 
+################################################################################
+#                                                                              #
+#                                 Typora                                       #
+#                                                                              #
+################################################################################
 echo_info "Installing typora"
 if ! which typora > /dev/null; then
     if wget -qO - https://typoraio.cn/linux/public-key.asc | sudo tee /etc/apt/trusted.gpg.d/typora.asc; then
@@ -64,8 +66,17 @@ else
     echo_ok "Typora already installed."
 fi
 
-echo_info "Copying default environment"
-cp "${CURDIR}/myenv" ~/.myenv
+################################################################################
+#                                                                              #
+#                                 exa                                          #
+#                                                                              #
+################################################################################
+fallback_ls() {
+    sed -i 's/exa -laF --group-directories-first --header --git --long/ls  -laF --group-directories-first/g' ~/.myenv
+    sed -i 's/exa -a --group-directories-first/ls -a --group-directories-first/g' ~/.myenv
+    sed -i 's/exa -lF --group-directories-first --header --git --long/ls -lF --group-directories-first/g' ~/.myenv
+    sed -i 's/exa --group-directories-first/ls --group-directories-first/g' ~/.myenv
+}
 
 if ! which exa > /dev/null; then
     echo_info "Trying to install exa manually since it was not installed automatically"
@@ -83,6 +94,11 @@ if ! which exa > /dev/null; then
     fi
 fi
 
+################################################################################
+#                                                                              #
+#                                 fzf                                          #
+#                                                                              #
+################################################################################
 #installing fzf only if it is not already installed
 echo_info "Installing fzf"
 if ! which fzf > /dev/null; then
@@ -98,6 +114,11 @@ else
     echo_info "Fzf already installed, skipping"
 fi
 
+################################################################################
+#                                                                              #
+#                               Oh My Zsh                                     #
+#                                                                              #
+################################################################################
 echo_info "Installing ohmyzsh"
 #test if ohmyzsh is already installed
 if [ -d ~/.oh-my-zsh ]; then
@@ -124,6 +145,11 @@ else
     fi
 fi
 
+################################################################################
+#                                                                              #
+#                                 vim                                          #
+#                                                                              #
+################################################################################
 #Configuring vim
 #Asking if vim should be reconfigured
 echo_info "Setting up vim"
@@ -146,6 +172,11 @@ else
     fi
 fi
 
+################################################################################
+#                                                                              #
+#                            diff-so-fancy                                    #
+#                                                                              #
+################################################################################
 echo_info "Setting up diff-so-fancy"
 if which diff-so-fancy > /dev/null; then
     echo_info "Diff-so-fancy already installed, skipping"
@@ -162,15 +193,25 @@ else
     fi
 fi
 
+################################################################################
+#                                                                              #
+#                                 git                                          #
+#                                                                              #
+################################################################################
 #ask for git config only if .gitconfig does not exist
 if [ ! -f ~/.gitconfig ]; then
-    echo_info "Setting up git"
+    echo_info "Setting up global git"
     read -p "Enter your global git username: " git_username
     read -p "Enter your global git email: " git_email
     git config --global user.name "$git_username"
     git config --global user.email "$git_email"
 fi
 
+
+echo_info "Copying default environment"
+cp "${CURDIR}/myenv" ~/.myenv
+
 cd - || exit
 rm -rf "$TMP"
+
 zsh

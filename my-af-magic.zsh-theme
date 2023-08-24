@@ -28,7 +28,7 @@ if (( $+functions[virtualenv_prompt_info] )); then
   RPS1+='$(virtualenv_prompt_info)'
 fi
 #RPS1+=" ${FG[237]}%n@%m%{$reset_color%}"
-RPS1+="😃 ${FG[105]}%D %*%{$reset_color%} ${FG[160]}%n@%m%{$reset_color%}"
+RPS1+="😃${FG[105]}%D %*%{$reset_color%} ${FG[160]}%n@%m%{$reset_color%}"
 
 # git settings
 ZSH_THEME_GIT_PROMPT_PREFIX=" ${FG[075]}(${FG[078]}"

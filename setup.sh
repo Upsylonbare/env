@@ -31,7 +31,8 @@ pkg_list="git\
           zsh\
           fdclone\
           bat\
-          xclip"
+          xclip\
+          fping"
 
 echo_info "Updating APT repositories"
 sudo apt update -yqq

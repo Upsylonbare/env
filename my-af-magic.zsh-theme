@@ -17,6 +17,12 @@ function afmagic_dashes {
   fi
 }
 
+TMOUT=1
+
+TRAPALRM() {
+    zle reset-prompt
+}
+
 # primary prompt: dashed separator, directory and vcs info
 PS1="${FG[237]}\${(l.\$(afmagic_dashes)..-.)}%{$reset_color%}
 ${FG[032]}%~\$(git_prompt_info)\$(hg_prompt_info) ${FG[105]}%(!.#.»)%{$reset_color%} "

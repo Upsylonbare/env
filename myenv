@@ -45,9 +45,6 @@ fi
 # Test if current environnement is wsl2
 if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
     export DISPLAY=:0
-    alias i3='sudo mount --bind /mnt/c/Users/clego/OneDrive\ -\ ESEO/Cours/I3 ~/I3/'
-    alias i2='sudo mount --bind /mnt/c/Users/clego/OneDrive\ -\ ESEO/Cours/I2 ~/I2/'
-    alias i='i2 && i3'
 fi
 
 if [ -n "$DISPLAY" ]; then

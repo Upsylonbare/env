@@ -17,8 +17,46 @@ function afmagic_dashes {
   fi
 }
 
-TMOUT=1
+theme_of_the_day() {
+  local today=$(date +'%m-%d')
+  local birthday='MM-DD'       # Replace MM-DD with your birthday
+  local christmas='12-25'
+  local valentines_day='02-14' # Valentine's Day
+  local halloween='10-31'     # Halloween
+  local earth_day='04-22'     # Earth Day
+  local national_day='07-14'  # Bastille Day (French national day)
+  local smile_day='10-01'     # World Smile Day
+  local april_fools='04-01'   # April Fools' Day
+  local pet_day='10-04'       # National Pet Day
+  local womens_day='03-08'    # International Women's Day
 
+  if [ "$today" = "$birthday" ]; then
+    echo "🎉"  # Emoji for birthday
+  elif [ "$today" = "$christmas" ]; then
+    echo "🎅"  # Emoji for Christmas
+  elif [ "$today" = "$valentines_day" ]; then
+    echo "❤️"  # Emoji for Valentine's Day
+  elif [ "$today" = "$halloween" ]; then
+    echo "🎃"  # Emoji for Halloween
+  elif [ "$today" = "$earth_day" ]; then
+    echo "🌍"  # Emoji for Earth Day
+  elif [ "$today" = "$national_day" ]; then
+    echo "🇫🇷"  # French flag emoji for Bastille Day
+  elif [ "$today" = "$smile_day" ]; then
+    echo "😃"  # Emoji for World Smile Day
+  elif [ "$today" = "$april_fools" ]; then
+    echo "🤡"  # Emoji for April Fools' Day
+  elif [ "$today" = "$pet_day" ]; then
+    echo "🐶🐱"  # Emoji for National Pet Day
+  elif [ "$today" = "$womens_day" ]; then
+    echo "♀️"  # Emoji for International Women's Day
+  else
+    echo "😃"  # Default emoji
+  fi
+}
+
+#Rst term prompt every seconds to get live updating clock
+TMOUT=1
 TRAPALRM() {
     zle reset-prompt
 }
@@ -34,7 +72,7 @@ if (( $+functions[virtualenv_prompt_info] )); then
   RPS1+='$(virtualenv_prompt_info)'
 fi
 #RPS1+=" ${FG[237]}%n@%m%{$reset_color%}"
-RPS1+="😃${FG[105]}%D %*%{$reset_color%} ${FG[160]}%n@%m%{$reset_color%}"
+RPS1+="\$(theme_of_the_day) ${FG[105]}%D %*%{$reset_color%} ${FG[160]}%n@%m%{$reset_color%}"
 
 # git settings
 ZSH_THEME_GIT_PROMPT_PREFIX=" ${FG[075]}(${FG[078]}"

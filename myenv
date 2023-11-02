@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Colored manpages
 export LESS_TERMCAP_mb=$'\e[1;32m'
@@ -9,37 +9,11 @@ export LESS_TERMCAP_so=$'\e[01;33m'
 export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;4;31m'
 
-export EDITOR=vim
 export FZF_DEFAULT_OPTS
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
-fi
-
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
-fi
-
-# set PATH for cargo if it exists
-if [ -d "$HOME/.carbo/bin" ] ; then
-    PATH="$HOME/.cargo/bin:$PATH"
-fi
-
-# set PATH for texlive if it exists
-if [ -d "/usr/local/texlive/2023/bin/x86_64-linux" ] ; then
-    PATH="/usr/local/texlive/2023/bin/x86_64-linux:$PATH"
-fi
-
-# set PATH for texlive man if it exists
-if [ -d "/usr/local/texlive/2023/texmf-dist/doc/man" ] ; then
-    MANPATH="/usr/local/texlive/2023/texmf-dist/doc/man:$MANPATH"
-fi
-
-# set PATH for texlive info if it exists
-if [ -d "/usr/local/texlive/2023/texmf-dist/doc/info" ] ; then
-    INFOPATH="/usr/local/texlive/2023/texmf-dist/doc/info:$INFOPATH"
 fi
 
 # Test if current environnement is wsl2
@@ -90,9 +64,10 @@ k()
 }
 
 gdiff() {
-    local path_to_repo=$(git rev-parse --show-toplevel)
+    local path_to_repo
+    path_to_repo=$(git rev-parse --show-toplevel)
     git diff \
-        $@ \
+        "$@" \
         --name-only | sed "s,^,$path_to_repo/," |
             fzf -m \
                 --reverse \
@@ -118,7 +93,7 @@ fcd() {
     dir=$(find -L . -type d 2> /dev/null | fzf +m)
 
     if [ -n "$dir" ]; then
-        cd "$dir"
+        cd "$dir" || exit
     fi
 }
 

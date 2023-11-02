@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Inspired from tot0k's setup.sh
 # https://gitlab.com/tot0k/myenv
 
@@ -7,7 +7,8 @@ CURDIR="$(pwd)"
 TMP="$(mktemp -d)"
 cd "$TMP" || exit
 echo_info "Setting up Legoffar's environment"
-
+BIN="$HOME/bin"
+mkdir -p "$BIN"
 ################################################################################
 #                                                                              #
 #                                 Pkg                                          #
@@ -29,10 +30,8 @@ pkg_list="git\
           net-tools\
           iproute2\
           zsh\
-          fdclone\
           bat\
-          xclip\
-          fping"
+          xclip"
 
 echo_info "Updating APT repositories"
 sudo apt update -yqq
@@ -49,26 +48,6 @@ done
 
 ################################################################################
 #                                                                              #
-#                                 Typora                                       #
-#                                                                              #
-################################################################################
-echo_info "Installing typora"
-if ! which typora > /dev/null; then
-    if wget -qO - https://typoraio.cn/linux/public-key.asc | sudo tee /etc/apt/trusted.gpg.d/typora.asc; then
-        sudo add-apt-repository -y 'deb https://typora.io/linux ./'
-        sudo apt-get update -yqq
-        if sudo apt-get -yqq install typora; then
-            echo_ok "Typora installed."
-        else
-            echo_err "Error while installing Typora!"
-        fi
-    fi
-else
-    echo_ok "Typora already installed."
-fi
-
-################################################################################
-#                                                                              #
 #                                 exa                                          #
 #                                                                              #
 ################################################################################
@@ -79,99 +58,90 @@ fallback_ls() {
     sed -i 's/exa --group-directories-first/ls --group-directories-first/g' ~/.myenv
 }
 
-if ! which exa > /dev/null; then
-    echo_info "Trying to install exa manually since it was not installed automatically"
-    if wget "https://github.com/ogham/exa/releases/download/v0.10.1/exa-linux-x86_64-v0.10.1.zip"; then
-        unzip exa-linux-x86_64-v0.10.1.zip
-        if sudo mv bin/exa /usr/bin/exa; then
-            echo_ok "Exa installed."
-        else
-            echo_err "Could not install exa, falling back to ls"
-            fallback_ls
+read -rp "Do you want to install exa? (y/n) " answer
+case ${answer:0:1} in
+    y|Y )
+        echo_info "Installing exa"
+        if ! which exa > /dev/null; then
+            if unzip res/exa*.zip; then
+                if sudo mv bin/exa "$BIN"; then
+                    echo_ok "Exa installed."
+                else
+                    echo_err "Could not install exa, falling back to ls"
+                    fallback_ls
+                fi
+            else
+                echo_err "Could not install exa, falling back to ls"
+                fallback_ls
+            fi
         fi
-    else
-        echo_err "Could not install exa, falling back to ls"
-        fallback_ls
-    fi
-fi
-
+;;
+    * )
+        echo_info "Skipping exa installation."
+    ;;
+esac
 ################################################################################
 #                                                                              #
 #                                 fzf                                          #
 #                                                                              #
 ################################################################################
-#installing fzf only if it is not already installed
-echo_info "Installing fzf"
-if ! which fzf > /dev/null; then
-    if wget "https://github.com/junegunn/fzf/releases/download/0.35.1/fzf-0.35.1-linux_amd64.tar.gz" > /dev/null; then
-        tar -xf fzf-0.35.1-linux_amd64.tar.gz
-        if sudo cp fzf /usr/bin/fzf; then
-            echo_ok "Fzf installed."
+read -rp "Do you want to install fzf? (y/n) " answer
+case ${answer:0:1} in
+    y|Y )
+        echo_info "Installing fzf"
+        if ! which fzf > /dev/null; then
+            if tar -xf res/*fzf.tar.gz; then
+                if sudo cp fzf "$BIN"; then
+                    echo_ok "Fzf installed."
+                else
+                    echo_err "Fzf not installed!"
+                fi
+            fi
         else
-            echo_err "Fzf not installed!"
+            echo_info "Fzf already installed, skipping"
         fi
-    fi
-else
-    echo_info "Fzf already installed, skipping"
-fi
-
+;;
+    * )
+        echo_info "Skipping fzf installation."
+    ;;
+esac
 ################################################################################
 #                                                                              #
 #                               Oh My Zsh                                     #
 #                                                                              #
 ################################################################################
-echo_info "Installing ohmyzsh"
-#test if ohmyzsh is already installed
-if [ -d ~/.oh-my-zsh ]; then
-    echo_info "OhMyZsh already installed, skipping"
-else
-    if sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --keep-zshrc --unattended; then
-        echo_ok "OhMyZsh installed."
-        echo_info "Copying zsh config"
-        cp "${CURDIR}/zshrc" ~/.zshrc
-        if  cp "${CURDIR}/my-af-magic.zsh-theme" ~/.oh-my-zsh/themes/my-af-magic.zsh-theme; then
-            echo_info "Using custom zsh theme"
+read -rp "Do you want to install fzf? (y/n) " answer
+case ${answer:0:1} in
+    y|Y )
+        echo_info "Installing ohmyzsh"
+        if [ -d ~/.oh-my-zsh ]; then
+            echo_info "OhMyZsh already installed, skipping"
         else
-            echo_err "Could not cp custom zsh theme, falling back to default theme"
-            sed -i 's/my-af-magic.zsh-theme/af-magic.zsh-theme/g' ~/.zshrc
+            if sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --keep-zshrc --unattended; then
+                echo_ok "OhMyZsh installed."
+                echo_info "Copying zsh config"
+                cp "${CURDIR}/zshrc" ~/.zshrc
+                if  cp "${CURDIR}/my-af-magic.zsh-theme" ~/.oh-my-zsh/themes/my-af-magic.zsh-theme; then
+                    echo_info "Using custom zsh theme"
+                else
+                    echo_err "Could not cp custom zsh theme, falling back to default theme"
+                    sed -i 's/my-af-magic.zsh-theme/af-magic.zsh-theme/g' ~/.zshrc
+                fi
+                echo_info "Setting zsh as default shell"
+                if chsh -s "$(which zsh)"; then
+                    echo_ok "Zsh set as default shell."
+                else
+                    echo_err "Could not set zsh as default shell!"
+                fi
+            else
+                echo_err "OhMyZsh not installed!"
+            fi
         fi
-        echo_info "Setting zsh as default shell"
-        if chsh -s "$(which zsh)"; then
-            echo_ok "Zsh set as default shell."
-        else
-            echo_err "Could not set zsh as default shell!"
-        fi
-    else
-        echo_err "OhMyZsh not installed!"
-    fi
-fi
-
-################################################################################
-#                                                                              #
-#                                 vim                                          #
-#                                                                              #
-################################################################################
-#Configuring vim
-#Asking if vim should be reconfigured
-echo_info "Setting up vim"
-if [ ! -d ~/.vim ]; then
-    mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/colors ~/.vim/plugged
-    curl -sfLo  ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    cp "${CURDIR}/vimrc" ~/.vimrc
-else
-    echo_info "Vim is already configured, do you want to reconfigure it? (y/n)"
-    read -r vim_reconfigure
-    if [ "$vim_reconfigure" = "y" ]; then
-        echo_info "Reconfiguring vim"
-        rm -rf ~/.vim ~/.vimrc
-        mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/colors ~/.vim/plugged
-        curl -sfLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        cp "${CURDIR}/vimrc" ~/.vimrc
-        vim +PlugInstall +qall > /dev/null 2>&1
-    else
-        echo_info "Keeping vim configuration"
-    fi
-fi
+;;
+    * )
+        echo_info "Skipping fzf installation."
+    ;;
+esac
 
 ################################################################################
 #                                                                              #
@@ -182,9 +152,8 @@ echo_info "Setting up diff-so-fancy"
 if which diff-so-fancy > /dev/null; then
     echo_info "Diff-so-fancy already installed, skipping"
 else
-    if wget "https://raw.githubusercontent.com/so-fancy/diff-so-fancy/master/third_party/build_fatpack/diff-so-fancy" ; then
-        if sudo mv diff-so-fancy /usr/local/bin/diff-so-fancy; then
-            chmod +x /usr/local/bin/diff-so-fancy
+    if mv res/diff-so-fancy "$BIN"; then
+        if chmod +x "$BIN"/diff-so-fancy; then
             echo_ok "Diff-so-fancy installed."
         else
             echo_err "Diff-so-fancy not installed!"
@@ -202,8 +171,8 @@ fi
 #ask for git config only if .gitconfig does not exist
 if [ ! -f ~/.gitconfig ]; then
     echo_info "Setting up global git"
-    read -p "Enter your global git username: " git_username
-    read -p "Enter your global git email: " git_email
+    read -rp "Enter your global git username: " git_username
+    read -rp "Enter your global git email: " git_email
     git config --global user.name "$git_username"
     git config --global user.email "$git_email"
 fi
@@ -216,3 +185,58 @@ cd - || exit
 rm -rf "$TMP"
 
 zsh
+
+################################################################################
+#                                                                              #
+#                                 Typora                                       #
+#                                                                              #
+################################################################################
+# read -rp "Do you want to install Typora? (y/n) " answer
+# case ${answer:0:1} in
+#     y|Y )
+#         echo_info "Installing typora"
+#         if ! which typora > /dev/null; then
+#             if wget -qO - https://typoraio.cn/linux/public-key.asc | sudo tee /etc/apt/trusted.gpg.d/typora.asc; then
+#                 sudo add-apt-repository -y 'deb https://typora.io/linux ./'
+#                 sudo apt-get update -yqq
+#                 if sudo apt-get -yqq install typora; then
+#                     echo_ok "Typora installed."
+#                 else
+#                     echo_err "Error while installing Typora!"
+#                 fi
+#             fi
+#         else
+#             echo_ok "Typora already installed."
+#         fi
+#     ;;
+#     * )
+#         echo_info "Skipping Typora installation."
+#     ;;
+# esac
+
+################################################################################
+#                                                                              #
+#                                 vim                                          #
+#                                                                              #
+################################################################################
+# #Configuring vim
+# #Asking if vim should be reconfigured
+# echo_info "Setting up vim"
+# if [ ! -d ~/.vim ]; then
+#     mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/colors ~/.vim/plugged
+#     curl -sfLo  ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+#     cp "${CURDIR}/vimrc" ~/.vimrc
+# else
+#     echo_info "Vim is already configured, do you want to reconfigure it? (y/n)"
+#     read -r vim_reconfigure
+#     if [ "$vim_reconfigure" = "y" ]; then
+#         echo_info "Reconfiguring vim"
+#         rm -rf ~/.vim ~/.vimrc
+#         mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/colors ~/.vim/plugged
+#         curl -sfLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+#         cp "${CURDIR}/vimrc" ~/.vimrc
+#         vim +PlugInstall +qall > /dev/null 2>&1
+#     else
+#         echo_info "Keeping vim configuration"
+#     fi
+# fi

@@ -155,3 +155,10 @@ speed_lg()
     git commit-graph write
 }
 
+download_some_backgrounds()
+{
+    for image in $(curl -s https://www.imoca.org/fr | tidy -q 2>&1 | grep "/mediacenter/uploads/xxl/" | sed 's/ //g' | sed 's/.*\/\(.*\.jpeg\).*/\1/') ; do
+        wget -P ~/Downloads/backgrounds https://www.imoca.org/mediacenter/uploads/xxl/"$image"
+    done
+    rm ~/Downloads/backgrounds/*.1
+}

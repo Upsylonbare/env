@@ -30,30 +30,30 @@ LOG_LEVEL=3
 
 echo_err() {
     if [ $LOG_LEVEL -ge 1 ]; then
-        echo "${RED}${BOLD}[ERROR] ${1}${RESET}"
+        echo -e "${RED}${BOLD}[ERROR] ${1}${RESET}"
     fi
 }
 
 echo_warn() {
     if [ $LOG_LEVEL -ge 2 ]; then
-        echo "${YELLOW}${BOLD}[WARNING] ${1}${RESET}"
+        echo -e "${YELLOW}${BOLD}[WARNING] ${1}${RESET}"
     fi
 }
 
 echo_ok() {
     if [ $LOG_LEVEL -ge 3 ]; then
-        echo "${GREEN}${BOLD}[OK]${NORM} ${1}${RESET}"
+        echo -e "${GREEN}${BOLD}[OK]${NORM} ${1}${RESET}"
     fi
 }
 
 echo_info() {
     if [ $LOG_LEVEL -ge 3 ]; then
-        echo "${WHITE}${BOLD}[INFO]${NORM} ${1}${RESET}"
+        echo -e "${WHITE}${BOLD}[INFO]${NORM} ${1}${RESET}"
     fi
 }
 
 echo_debug() {
     if [ $LOG_LEVEL -ge 4 ]; then
-        echo "${LIGHTGRAY}${BOLD}[DEBUG]${NORM} ${1}${RESET}"
+        echo -e "${LIGHTGRAY}${BOLD}[DEBUG]${NORM} ${1}${RESET}"
     fi
 }

@@ -9,6 +9,8 @@ cd "$TMP" || exit
 echo_info "Setting up Legoffar's environment"
 BIN="$HOME/bin"
 mkdir -p "$BIN"
+ZDOTDIR="$HOME/.config/zsh"
+mkdir -p "$ZDOTDIR"
 ################################################################################
 #                                                                              #
 #                                 Pkg                                          #

@@ -11,6 +11,17 @@ export LESS_TERMCAP_us=$'\e[1;4;31m'
 
 export FZF_DEFAULT_OPTS
 
+export XDG_CONFIG_HOME="$HOME/.config"
+#ZSH
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+export HISTFILE="$ZDOTDIR/zsh_history"
+export ZSH_COMPDUMP="$ZDOTDIR/zcompdump-$HOST"
+#vim
+export VIMDOTDIR="$XDG_CONFIG_HOME/vim"
+#less
+export LESSHISTFILE="${XDG_CONFIG_HOME}/less/lesshst"
+export GDBHISTFILE="${XDG_CONFIG_HOME}/gdb/gdb_history"
+
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
@@ -37,7 +48,7 @@ alias la='exa -a --group-directories-first'
 alias l='exa -lF --group-directories-first --header --long'
 
 alias up='sudo apt-get update -y && sudo apt-get upgrade -y'
-alias reload='echo "Sourcing environnement"; source ~/.zshrc'
+alias reload='echo "Sourcing environnement"; source "$ZDOTDIR/.zshrc"'
 alias cat='batcat -p'
 
 alias findall="find * | \
@@ -48,7 +59,7 @@ alias findall="find * | \
                     xargs realpath | xclip -r -selection clipboard"
 
 alias path="echo \$PATH | tr ':' '\n'"
-
+alias wget='wget --hsts-file "$XDG_CONFIG_HOME"/wget/.wget-hsts'
 
 _gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
 

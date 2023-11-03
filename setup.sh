@@ -183,6 +183,9 @@ fi
 echo_info "Copying default environment"
 cp "${CURDIR}/myenv" ~/.myenv
 
+echo_info "Copying utils.sh"
+cp "${CURDIR}/utils.sh" "$BIN"
+
 cd - || exit
 rm -rf "$TMP"
 

@@ -20,6 +20,7 @@ export ZSH_COMPDUMP="$ZDOTDIR/zcompdump-$HOST"
 export VIMDOTDIR="$XDG_CONFIG_HOME/vim"
 #less
 export LESSHISTFILE="${XDG_CONFIG_HOME}/less/lesshst"
+#gdb
 export GDBHISTFILE="${XDG_CONFIG_HOME}/gdb/gdb_history"
 
 # set PATH so it includes user's private bin if it exists
@@ -61,7 +62,7 @@ alias findall="find * | \
 alias path="echo \$PATH | tr ':' '\n'"
 alias wget='wget --hsts-file "$XDG_CONFIG_HOME"/wget/.wget-hsts'
 
-_gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
+_gitLogLineToHash="echo {} | grep -o '[a-f0-9]\{12\}' | head -1"
 
 _view_commit="echo {} | $_gitLogLineToHash | xargs -I % sh -c 'git show --color=always % | diff-so-fancy' | less -R"
 _view_file="echo {} | xargs -I % sh -c 'batcat --style=numbers --color=always % | less -R'"
@@ -123,10 +124,10 @@ my_git_log() {
     if [ -n "$DISPLAY" ] && eval "$display_check"; then
         git log \
         --graph \
-        --all \
+        --abrev=12 \
         --oneline \
         --color=always \
-        --format="%C(cyan)%hv %C(blue)%ar %C(auto)%d %C(yellow)%s%+b %C(white)%ae" "$@" |
+        --format="%C(cyan)%h %C(blue)%ar %C(auto)%d %C(yellow)%s%+b %C(white)%ae" "$@" |
         fzf -i -e +s \
             --reverse \
             --tiebreak=index \
@@ -140,10 +141,10 @@ my_git_log() {
     else
         git log \
         --graph \
-        --all \
+        --abrev=12 \
         --oneline \
         --color=always \
-        --format="%C(cyan)%hv %C(blue)%ar %C(auto)%d %C(yellow)%s%+b %C(white)%ae" "$@" |
+        --format="%C(cyan)%h %C(blue)%ar %C(auto)%d %C(yellow)%s%+b %C(white)%ae" "$@" |
         fzf -i -e +s \
             --reverse \
             --tiebreak=index \

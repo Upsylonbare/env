@@ -20,6 +20,7 @@ export ZSH_COMPDUMP="$ZDOTDIR/zcompdump-$HOST"
 export VIMDOTDIR="$XDG_CONFIG_HOME/vim"
 #less
 export LESSHISTFILE="${XDG_CONFIG_HOME}/less/lesshst"
+#gdb
 export GDBHISTFILE="${XDG_CONFIG_HOME}/gdb/gdb_history"
 
 # set PATH so it includes user's private bin if it exists
@@ -138,7 +139,7 @@ my_git_log() {
         git log \
         --abbrev=12 \
         --graph \
-        --all \
+        --abrev=12 \
         --oneline \
         --color=always \
         --format="%C(cyan)%h %C(blue)%ar %C(auto)%d %C(yellow)%s %C(white)%ae" "$@" |
@@ -157,7 +158,7 @@ my_git_log() {
         git log \
         --abbrev=12 \
         --graph \
-        --all \
+        --abrev=12 \
         --oneline \
         --color=always \
         --format="%C(cyan)%h %C(blue)%ar %C(auto)%d %C(yellow)%s%+b %C(white)%ae" "$@" |

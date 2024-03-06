@@ -56,14 +56,14 @@ theme_of_the_day() {
 }
 
 #Rst term prompt every seconds to get live updating clock
-TMOUT=1
-TRAPALRM() {
-    zle reset-prompt
-}
+#TMOUT=1
+#TRAPALRM() {
+#    zle reset-prompt
+#}
 
 # primary prompt: dashed separator, directory and vcs info
 PS1="${FG[237]}\${(l.\$(afmagic_dashes)..-.)}%{$reset_color%}
-${FG[032]}%~\$(git_prompt_info)\$(hg_prompt_info) ${FG[105]}%(!.#.»)%{$reset_color%} "
+${FG[039]}%~\$(git_prompt_info)\$(hg_prompt_info) ${FG[105]}%(!.#.»)%{$reset_color%} "
 PS2="%{$fg[red]%}\ %{$reset_color%}"
 
 # right prompt: return code, virtualenv and context (user@host)
@@ -89,3 +89,8 @@ ZSH_THEME_HG_PROMPT_SUFFIX="${FG[075]})%{$reset_color%}"
 # virtualenv settings
 ZSH_THEME_VIRTUALENV_PREFIX=" ${FG[075]}["
 ZSH_THEME_VIRTUALENV_SUFFIX="]%{$reset_color%}"
+
+# Tune exa colors:
+export EXA_COLORS="di=38;5;033:da=38;5;146"
+# For zsh to use colors
+export LS_COLORS=${LS_COLORS//di=01;34:/di=38;5;033:}
